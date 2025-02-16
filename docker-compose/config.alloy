@@ -1,0 +1,58 @@
+otelcol.receiver.otlp "main" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+
+  output {
+    metrics = [otelcol.processor.batch.default.input]
+    logs    = [otelcol.processor.batch.default.input]
+    traces  = [otelcol.processor.batch.default.input]
+  }
+}
+
+otelcol.processor.batch "default" {
+  output {
+    metrics = [
+      otelcol.exporter.debug.console.input,
+      otelcol.exporter.prometheus.default.input,
+    ]
+    logs = [
+      otelcol.exporter.debug.console.input,
+      otelcol.exporter.loki.default.input,
+    ]
+    traces  = [otelcol.exporter.debug.console.input]
+  }
+
+}
+
+
+otelcol.exporter.debug "console" {
+  // verbosity = "detailed"
+}
+
+otelcol.exporter.prometheus "default" {
+  resource_to_telemetry_conversion = true
+  forward_to = [prometheus.remote_write.prom.receiver]
+}
+
+otelcol.exporter.loki "default" {
+  forward_to = [loki.write.default.receiver]
+}
+
+prometheus.remote_write "prom" {
+  endpoint {
+    url = "http://prom:9090/api/v1/write"
+  }
+}
+
+loki.write "default" {
+  endpoint {
+    url       = "http://gateway:3100/loki/api/v1/push"
+    tenant_id = "tenant1"
+  }
+  external_labels = {}
+}

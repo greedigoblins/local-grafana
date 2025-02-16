@@ -2,6 +2,8 @@
 import os
 import logging
 import time
+import random
+import uuid
 
 from opentelemetry import trace, metrics
 
@@ -20,7 +22,8 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
 # General Otel Setup
-APP_SERVICE_NAME = "randy-demo"
+name_salt = uuid.uuid4().hex[:6]
+APP_SERVICE_NAME = f"py-demo-{name_salt}"
 otel_resource = Resource.create(
     {
         SERVICE_NAME: APP_SERVICE_NAME,
@@ -47,6 +50,7 @@ if os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", None) != None:
     print(f"metrics_exporter: {metrics_endpoint}")
     print(f"trace_endpoint: {tracing_endpoint}")
     print(f"log_endpoint: {logs_endpoint}")
+    print(f"service_name: {APP_SERVICE_NAME}")
 
 else:
     from opentelemetry.sdk.trace.export import ConsoleSpanExporter
@@ -80,11 +84,11 @@ otel_log_handler = LoggingHandler(level=logging.NOTSET, logger_provider=logger_p
 metric_reader = PeriodicExportingMetricReader(metrics_exporter, 1000, 500)
 metrics_provider = MeterProvider(resource=otel_resource, metric_readers=[metric_reader])
 metrics.set_meter_provider(metrics_provider)
-metrics_meter = metrics.get_meter("randy_demo")
+metrics_meter = metrics.get_meter(APP_SERVICE_NAME)
 
 
 work_counter = metrics_meter.create_counter(
-    "randy_work_counter", unit="1", description="Counts the amount of work done"
+    "py_work_counter", unit="1", description="Counts the amount of work done"
 )
 
 
@@ -97,7 +101,7 @@ def main():
         with tracer.start_as_current_span("main") as span:
             span.set_attribute("loop_ip", f"{i}")
             logging.info(f"Doing the work {i}")
-            work_counter.add(1, {"tatoes": "hobbit"})
+            work_counter.add(random.randint(1, 10), {"tatoes": "hobbit"})
             print("Do the work here")
         time.sleep(1)
 

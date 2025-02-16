@@ -3,7 +3,7 @@ datasources:
   - name: Loki
     type: loki
     access: proxy
-    url: http://gateway:3100
+    url: http://loki-gateway:3100
     jsonData:
       httpHeaderName1: "X-Scope-OrgID"
     secureJsonData:
@@ -12,3 +12,7 @@ datasources:
     type: prometheus
     access: proxy
     url: http://prom:9090
+  - name: tempo
+    type: tempo
+    access: proxy
+    url: http://tempo:3200

@@ -38,7 +38,10 @@ otelcol.exporter.debug "console" {
 }
 
 otelcol.exporter.prometheus "default" {
-  resource_to_telemetry_conversion = true
+  // This is false by default. It basically takes all the resource attributes
+  // and sets them as tags on your metrics. Use with cation as it can become
+  // a cardinality hell hole since there is a lot of tags that get added.
+  resource_to_telemetry_conversion = false
   forward_to = [prometheus.remote_write.prom.receiver]
 }
 

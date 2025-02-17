@@ -114,7 +114,7 @@ services:
 
   loki-read:
     image: grafana/loki:latest
-    command: "-config.file=/etc/loki/config.yaml -target=loki-read"
+    command: "-config.file=/etc/loki/config.yaml -target=read"
     ports:
       - 3101:3100
       - 7946
@@ -135,7 +135,7 @@ services:
 
   loki-write:
     image: grafana/loki:latest
-    command: "-config.file=/etc/loki/config.yaml -target=loki-write"
+    command: "-config.file=/etc/loki/config.yaml -target=write"
     ports:
       - 3102:3100
       - 7946
@@ -187,7 +187,7 @@ services:
     ports:
       - 3100
       - 7946
-    command: "-config.file=/etc/loki/config.yaml -target=loki-backend -legacy-read-mode=false"
+    command: "-config.file=/etc/loki/config.yaml -target=backend -legacy-read-mode=false"
     depends_on:
       - loki-gateway
     networks:

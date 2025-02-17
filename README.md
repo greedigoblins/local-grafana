@@ -13,7 +13,10 @@ There is currently a Docker Compose version. However we will also get a kubernet
 # Docker compose
 
 To use the docker compose version you will need a recent version of docker installed.
-Docker now comes with compose built in.
+Docker now comes with compose built in. I'd recommend docker desktop since it is
+built to be easy.
+
+Firstly you will need to cd to the docker-compose directory: `cd docker-compose`.
 
 Start all the containers via `docker compose up`.
 
